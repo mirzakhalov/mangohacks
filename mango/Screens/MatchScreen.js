@@ -4,7 +4,7 @@ import { Constants, Location, Permissions } from 'expo';
 
 class MatchScreen extends Component {
   state = {
-    location: "",
+    location: null,
     errorMessage: null,
   };
 
@@ -33,9 +33,19 @@ class MatchScreen extends Component {
   render() {
     
     let text = 'Waiting..';
-    let latitude = JSON.stringify(this.state.location.coords.latitude);
-    let longitude = JSON.stringify(this.state.location.coords.latitude);
-    text = JSON.stringify(this.state.location);
+    // Tryies 10 times to get the location and then quits
+    
+    for(let i = 0; i< 10; i++){
+      if(this.state.location != null || this.state.location != undefined){
+        let latitude = JSON.stringify(this.state.location.coords.latitude);
+        let longitude = JSON.stringify(this.state.location.coords.longitude);
+        text = latitude + " , " + longitude
+        break; 
+      }
+      else{
+        this._getLocationAsync();
+      }
+    }
 
     return (
       <View style={styles.container}>
