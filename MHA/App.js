@@ -18,13 +18,18 @@ firebase.initializeApp(firebaseConfig);
 
 function storeData(email, data) {
   firebase.database().ref('users/' + email.split("@")[0]).set({
-    data: data
+    data: data,
+    cats: "test"
   });
 }
 
+let temp;
 function getData(email) {
   firebase.database().ref('users/' + email.split("@")[0]).on('value',function(snapshot) {
-    console.log(snapshot.val().data);
+    console.log(snapshot.val());
+    
+    
+    temp = snapshot.val(); 
   });
 }
 
@@ -61,8 +66,9 @@ export default class Login extends React.Component {
     try{
       firebase.auth().signInWithEmailAndPassword(email, password).then(function (user){
         //console.log(user)
-        storeData(email,password)
+        storeData(email,"cats")
         getData(email)
+        console.log(temp)
       })
     }catch(error){
       console.log(error.toString())
