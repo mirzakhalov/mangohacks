@@ -16,6 +16,18 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+function storeData(email, data) {
+  firebase.database().ref('users/' + email.split("@")[0]).set({
+    data: data
+  });
+}
+
+function getData(email) {
+  firebase.database().ref('users/' + email.split("@")[0]).on('value',function(snapshot) {
+    console.log(snapshot.val().data);
+  });
+}
+
 import { Container, Content, Header, Form, Input, Item, Button, Label } from 'native-base'
 
 export default class Login extends React.Component {
@@ -48,7 +60,9 @@ export default class Login extends React.Component {
   loginUser = (email,password) => {
     try{
       firebase.auth().signInWithEmailAndPassword(email, password).then(function (user){
-        console.log(user)
+        //console.log(user)
+        storeData(email,password)
+        getData(email)
       })
     }catch(error){
       console.log(error.toString())
