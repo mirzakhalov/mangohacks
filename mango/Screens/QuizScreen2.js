@@ -10,7 +10,7 @@ import { Card } from 'react-native-elements'; // 0.18.5
 
 import "@expo/vector-icons"; // 6.2.2
 
-class QuizScreen extends React.Component {
+class QuizScreen2 extends React.Component {
   constructor(props){
     super(props)
 
@@ -41,7 +41,7 @@ class QuizScreen extends React.Component {
         console.log(email)
         firebase.database().ref('users/' + email.split("@")[0] + '/answers/').set(data);
         alert("New data uploaded")
-        this.props.navigation.navigate("MatchScreen",{email}) 
+        this.props.navigation.navigate("MainScreen",{email}) 
     } else {
         alert("Insufficient data")
     }
@@ -101,7 +101,7 @@ class QuizScreen extends React.Component {
 
             <View style={styles.container}>
               <Text style={styles.paragraph}>
-                What are you looking for in a mentor?
+                What skills can you offer as a mentor?
               </Text>
               <Text>
                 Career guidance
@@ -160,7 +160,7 @@ class QuizScreen extends React.Component {
           <Card title="Question 2">
             <View style={styles.container}>
               <Text style={styles.paragraph}>
-                What skills would you like to share?
+                What skills would you like to learn?
               </Text>
                 <Text>
                   Technology
@@ -195,7 +195,7 @@ class QuizScreen extends React.Component {
             
             <View style={styles.container}>
               <Text style={styles.paragraph}>
-                Which of the following best describe your future goals?
+                Which of the following best describe your past achievements?
               </Text>
               <Text>
                 Career success
@@ -262,7 +262,7 @@ class QuizScreen extends React.Component {
           <Card title="Question 5">
             <View style={styles.container}>
               <Text style={styles.paragraph}>
-                Which of the following traits best describe your personality?
+                Which of the following traits are you looking for in a mentee?
               </Text>
 
               <Text>
@@ -415,7 +415,7 @@ class QuizScreen extends React.Component {
           <Card title="Question 6">
             <View style={styles.container}>
               <Text style={styles.paragraph}>
-                Which of the following traits are you looking for in a mentor?
+                Which of the following traits best describe your personality?
               </Text>
               <Text>
                 Imaginative
@@ -615,4 +615,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default QuizScreen;
+export default QuizScreen2;

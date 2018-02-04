@@ -2,10 +2,14 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import * as firebase from 'firebase';
-import { Container, Content, Header, Form, Input, Item, Button, Label } from 'native-base';
+import { Container, Content, Header, Form, Input, Item, Button, Label, CheckBox } from 'native-base';
 
 function storeData(email, data) {
   firebase.database().ref('users/' + email.split("@")[0]).set(data);
+}
+
+function initMatchData(email) {
+  firebase.database().ref('users/' + email.split("@")[0] + '/matches').set(({init: ''}));
 }
 
 let temp;
@@ -27,8 +31,10 @@ class SignupScreen extends React.Component {
       phone_number: '',
       email: '',
       password: '',
-      confirm_password: ''
+      confirm_password: '',
     })
+
+    this.temp_err = true;
 
   }
 
@@ -55,19 +61,28 @@ class SignupScreen extends React.Component {
           return;
       } 
 
-      firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(error => 
-      {
-        alert(error.toString())
-      })
 
-      try {
+      firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(function(error){
         storeData(this.state.email, this.state)
-        getData(this.state.email)
-        console.log(temp)
-      } catch (error) {
-        alert("ERROR When uploading data. Try Again Later")
-        return
-      }
+        initMatchData(this.state.email)
+        email = this.state.email
+        alert("Let's take a quiz to find your matches!")
+        if(this.state.age >= 50){
+          this.props.navigation.navigate("QuizScreen2",{email})
+        } else {
+          this.props.navigation.navigate("QuizScreen",{email})
+        }
+      }).catch(function(error) {
+        console.log(error);
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/invalid-email') {
+          alert('Invalid Email Format');
+        } else {
+          alert(errorMessage);
+        }
+        this.temp_err = true;
+      })
     }
 }
 

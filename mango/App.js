@@ -8,6 +8,7 @@ import MatchScreen from './Screens/MatchScreen';
 import RequestScreen from './Screens/RequestScreen';
 import SignupScreen from './Screens/SignupScreen';
 import QuizScreen from './Screens/QuizScreen';
+import QuizScreen2 from './Screens/QuizScreen2';
 
 import * as firebase from 'firebase';
 import { Container, Content, Header, Form, Input, Item, Button, Label } from 'native-base';
@@ -34,9 +35,10 @@ const Screens = StackNavigator({
   InitialScreen: { screen: InitialScreen },
   LoginScreen: { screen: LoginScreen },
   SignupScreen: { screen: SignupScreen },
-  //MainScreen: { screen: MainScreen },
-  //MatchScreen: { screen: MatchScreen },
-  //QuizScreen: { screen: QuizScreen },
-  //RequestScreen: { screen: RequestScreen }
+  MainScreen: { screen: MainScreen },
+  MatchScreen: { screen: MatchScreen },
+  QuizScreen: { screen: QuizScreen },
+  QuizScreen2: { screen: QuizScreen2 },
+  RequestScreen: { screen: RequestScreen }
 })
 

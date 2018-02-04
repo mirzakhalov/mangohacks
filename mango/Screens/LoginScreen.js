@@ -4,6 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as firebase from 'firebase';
 import { Container, Content, Header, Form, Input, Item, Button, Label } from 'native-base';
 
+let temp;
+function getAge(email) {
+  firebase.database().ref('users/' + email.split("@")[0]).on('value',function(snapshot) {
+    console.log(snapshot.val());
+    temp = snapshot.val().age; 
+  });
+}
+
 class LoginScreen extends React.Component {
   constructor(props){
     super(props)
@@ -13,10 +21,18 @@ class LoginScreen extends React.Component {
       password: ''
     })
 
-  }
+    this.temp_err = false;
 
+  }
   loginUser = (email,password) => {
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function(error){
+      getAge(this.state.email)
+      if(temp >= 50){
+        this.props.navigation.navigate("MainScreen", {email})
+      } else {
+        this.props.navigation.navigate("MatchScreen", {email})
+      }
+    }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -24,12 +40,13 @@ class LoginScreen extends React.Component {
         alert('Wrong password.');
       } else if (errorCode === 'auth/user-not-found') {
         alert('User not found. ');
+      } else if (errorCode === 'auth/invalid-email') {
+        alert('Invalid Email Format');
       } else {
         alert(errorMessage);
       }
       console.log(error);
     });
-    
     
   }
 
@@ -71,6 +88,7 @@ class LoginScreen extends React.Component {
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
