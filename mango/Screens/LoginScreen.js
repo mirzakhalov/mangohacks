@@ -25,14 +25,16 @@ class LoginScreen extends React.Component {
 
   }
   loginUser = (email,password) => {
-    firebase.auth().signInWithEmailAndPassword(email, password).then(function(error){
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((data)=>{
       getAge(this.state.email)
       if(temp >= 50){
         this.props.navigation.navigate("MainScreen", {email})
       } else {
         this.props.navigation.navigate("MatchScreen", {email})
       }
-    }).catch(function(error) {
+    })
+    .catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;

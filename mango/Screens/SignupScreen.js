@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Constants, Location, Permissions } from 'expo';
+
 import * as firebase from 'firebase';
 import { Container, Content, Header, Form, Input, Item, Button, Label, CheckBox } from 'native-base';
 
@@ -32,13 +34,24 @@ class SignupScreen extends React.Component {
       email: '',
       password: '',
       confirm_password: '',
+      latitude: null,
+      longitude: null,
+      location: null
     })
-
-    this.temp_err = true;
-
   }
 
-  signUpUser = () => {
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
+    // Get the current position of the user as an Json object
+    this.state.location = await Location.getCurrentPositionAsync({});
+  }
+
+  signUpUser() {
     if (!(
       this.state.first_name != '' &&
       this.state.last_name != '' &&
@@ -50,7 +63,8 @@ class SignupScreen extends React.Component {
     ){
       alert("Please fill all the information")
       return;
-    } else {
+    }
+    else {
 
       if (this.state.password.length < 6) {
           alert("Please enter atleast 6 characters")
@@ -61,28 +75,42 @@ class SignupScreen extends React.Component {
           return;
       } 
 
-
-      firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(function(error){
-        storeData(this.state.email, this.state)
-        initMatchData(this.state.email)
-        email = this.state.email
-        alert("Let's take a quiz to find your matches!")
-        if(this.state.age >= 50){
-          this.props.navigation.navigate("QuizScreen2",{email})
-        } else {
-          this.props.navigation.navigate("QuizScreen",{email})
-        }
-      }).catch(function(error) {
-        console.log(error);
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        if (errorCode === 'auth/invalid-email') {
-          alert('Invalid Email Format');
-        } else {
-          alert(errorMessage);
-        }
-        this.temp_err = true;
-      })
+      firebase.auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then((data)=>{
+          console.log(data)
+          console.log(this.state.email)
+          for(let i= 0; i< 100; i++){
+            if(this.state.location != null || this.state.location != undefined){    
+                this.state.latitude = JSON.stringify(this.state.location.coords.latitude);
+                this.state.longitude = JSON.stringify(this.state.location.coords.longitude);
+                break;
+            }
+            else{
+                this._getLocationAsync();
+                console.log(i)
+            }}
+          console.log(this.state)
+          storeData(this.state.email, this.state)
+          initMatchData(this.state.email)
+          email = this.state.email
+          alert("Let's take a quiz to find your matches!")
+          if(this.state.age >= 50){
+            this.props.navigation.navigate("QuizScreen2",{email})
+          } else {
+            this.props.navigation.navigate("QuizScreen",{email})
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          if (errorCode === 'auth/invalid-email') {
+            alert('Invalid Email Format');
+          } else {
+            alert(errorMessage);
+          }
+        })
     }
 }
 
@@ -156,7 +184,7 @@ class SignupScreen extends React.Component {
             full
             rounded
             success
-            onPress={() => this.signUpUser()}
+            onPress={this.signUpUser.bind(this)}
           >
             <Text style={{color:'white'}}>Get Started</Text>
           </Button>
