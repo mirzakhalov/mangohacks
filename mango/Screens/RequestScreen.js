@@ -1,29 +1,122 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, BackAndroid } from 'react-native';
+import { Button } from 'native-base';
 import MatchScreen from "./MatchScreen";
 
+let i = 0;
+function storeData(email, data) {
+  firebase.database().ref('users/' + email.split("@")[0]).set(data);
+}
+
+let temp_lat, temp_lon;
+function storeData(email, data) {
+firebase.database().ref('users/' + email.split("@")[0]).set(data);
+}
+
+let temp, temp2;
+function getEmailList() {
+firebase.database().ref('emails').on('value',function(snapshot) {
+  console.log(snapshot.val());
+  temp = snapshot.val(); 
+});
+}
+
+function updateEmailList(email) {
+getEmailList();
+if(temp == undefined){
+  console.log(temp)
+  firebase.database().ref('emails').set(email);
+} else {
+  console.log(temp)
+  firebase.database().ref('emails').set(temp + "|||" + email);
+}
+}
+
+function updateMatchList(email,new_email) {
+getMatchList(email);
+if(temp == undefined){
+  console.log(temp)
+  firebase.database().ref('users/' + email.split("@")[0] + '/matches').set(new_email);
+} else {
+  console.log(temp)
+  firebase.database().ref('users/' + email.split("@")[0] + '/matches').set(temp + "|||" + new_email);
+}
+}
+
+function getMatchList(email) {
+firebase.database().ref('users/' + email.split("@")[0] + '/matches').on('value',function(snapshot) {
+  console.log(snapshot.val());
+  temp = snapshot.val(); 
+});
+}
+
+function initMatchData(email) {
+firebase.database().ref('users/' + email.split("@")[0] + '/matches').set((""));
+}
+
+function getData(email) {
+firebase.database().ref('users/' + email.split("@")[0]).on('value',function(snapshot) {
+  console.log(snapshot.val());
+  temp = snapshot.val(); 
+});
+}
+
+let names = new Array();
+names = ["Darcy Lynn", "Steven Robinson","Juliana Keller", "Shaniqua Robles" ]
+let ages = new Array();
+ages = [75, 78, 75, 68];
+let hobbies = new Array();
+hobbies = ["Former astronaut", "Boardgames, watching football", "Into antique cars, card games fan, baseball", "Tai Chi, Watching movies, Talking to people",]
+let bios = new Array();
+let image_paths = new Array();
+image_paths = ['old_person_6.png', 'Steven.png', 'Juliana.png']
 class RequestScreen extends React.Component {
 
+    
+    backup(n) {
+        return [names[n], ages[n], hobbies[n], bios[n], image_paths[n]];
+    }
+    
     render() {
-        console.log(this.props.navigation.state.params.emails)
-        //let theEmailArray = MatchScreen.fetchTheEmailArray();
+       // console.log(this.props.navigation.state.params.emails)
+        //let theEmailArray = MatchScreen.fetchTheEmailArray()
+        if(i >= 4){
+          alert("No more matches are found!")
+        }
+        responses = this.backup(i)
+        i++;
+        
         return (
-        <View style={styles.bigcontainer}>
+        <View style = {styles.bigcontainer}>
+            <View style = {{marginBottom: 250, fontsize: 35, }}>
+            <Image source= {(i == 1 ? require('../assets/old_person_6.png') :
+              (i == 2 ? require('../assets/Steven.png') :
+              (i == 3 ? require('../assets/Juliana.png') :
+              (i == 4 ? require('../assets/sh.jpg') :
+              require('../assets/download.png')))))}>
             
-            <Image style = {styles.bioinfo}
-            source={require('../assets/download.png')}/>
-            <Image/>     
-            
-            <Button 
-                style = {styles.button}
-                title = "I will meet you!"
-                onPress = {() => (true)}
-            />
-            <Button 
-                style = {styles.button}
-                title = "I will meet you!"
-                onPress = {() => (true)}
-            />
+              </Image>
+            <Text style = {{marginTop: 10, fontsize: 70, alignSelf: "center" }}> Name: {responses[0]} </Text>
+            <Text style = {{marginTop: 10, fontsize: 70, alignSelf: "center"}} > Age: {responses[1]} </Text>
+            <Text style = {{marginTop: 10, fontsize: 70, alignSelf: "center"}}> Hobbies: {responses[2]}  </Text>   
+            </View>
+            <Button style={{  }}
+            full
+            rounded
+            success
+            onPress={() => alert(responses[0] +  " will be notified!")}
+          >
+            <Text style={{color:'white'}}>Schedule A Meeting</Text>
+          </Button>
+
+          <Button style={{ marginTop: 20, marginBottom: 40 }}
+            full
+            rounded
+            primary
+            onPress={() => this.forceUpdate()}
+          >
+            <Text style={{color:'white'}}>Maybe Not</Text>
+          </Button>
         </View>
         );
     }
@@ -43,7 +136,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       marginTop: 20,
       marginLeft: 0,
-      marginBottom: 250,
+      marginBottom: 50,
       marginRight: 0,
       height: 100,
       width: 200

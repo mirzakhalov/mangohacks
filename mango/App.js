@@ -9,6 +9,7 @@ import RequestScreen from './Screens/RequestScreen';
 import SignupScreen from './Screens/SignupScreen';
 import QuizScreen from './Screens/QuizScreen';
 import QuizScreen2 from './Screens/QuizScreen2';
+import AuthScreen from './Screens/AuthScreen';
 
 import * as firebase from 'firebase';
 import { Container, Content, Header, Form, Input, Item, Button, Label } from 'native-base';
@@ -26,6 +27,7 @@ firebase.initializeApp(firebaseConfig);
 
 export default class App extends React.Component {
   render() {
+    console.disableYellowBox = true;
     return (
       <Screens/>
     );
@@ -39,6 +41,7 @@ const Screens = StackNavigator({
   MatchScreen: { screen: MatchScreen },
   QuizScreen: { screen: QuizScreen },
   QuizScreen2: { screen: QuizScreen2 },
+  AuthScreen: { screen: AuthScreen },
   RequestScreen: { screen: RequestScreen }
 })
 

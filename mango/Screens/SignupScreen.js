@@ -10,11 +10,47 @@ function storeData(email, data) {
   firebase.database().ref('users/' + email.split("@")[0]).set(data);
 }
 
-function initMatchData(email) {
-  firebase.database().ref('users/' + email.split("@")[0] + '/matches').set(({init: ''}));
+let temp, temp2;
+function getEmailList() {
+  firebase.database().ref('emails').on('value',function(snapshot) {
+    console.log(snapshot.val());
+    temp = snapshot.val(); 
+  });
 }
 
-let temp;
+function updateEmailList(email) {
+  getEmailList();
+  if(temp == undefined){
+    console.log(temp)
+    firebase.database().ref('emails').set(email);
+  } else {
+    console.log(temp)
+    firebase.database().ref('emails').set(temp + "|||" + email);
+  }
+}
+
+function updateMatchList(email,new_email) {
+  getMatchList(email);
+  if(temp == undefined){
+    console.log(temp)
+    firebase.database().ref('users/' + email.split("@")[0] + '/matches').set(new_email);
+  } else {
+    console.log(temp)
+    firebase.database().ref('users/' + email.split("@")[0] + '/matches').set(temp + "|||" + new_email);
+  }
+}
+
+function getMatchList(email) {
+  firebase.database().ref('users/' + email.split("@")[0] + '/matches').on('value',function(snapshot) {
+    console.log(snapshot.val());
+    temp = snapshot.val(); 
+  });
+}
+
+function initMatchData(email) {
+  firebase.database().ref('users/' + email.split("@")[0] + '/matches').set((""));
+}
+
 function getData(email) {
   firebase.database().ref('users/' + email.split("@")[0]).on('value',function(snapshot) {
     console.log(snapshot.val());
@@ -34,21 +70,8 @@ class SignupScreen extends React.Component {
       email: '',
       password: '',
       confirm_password: '',
-      latitude: null,
-      longitude: null,
-      location: null
+      zipcode: ''
     })
-  }
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
-    }
-    // Get the current position of the user as an Json object
-    this.state.location = await Location.getCurrentPositionAsync({});
   }
 
   signUpUser() {
@@ -59,6 +82,7 @@ class SignupScreen extends React.Component {
       this.state.phone_number != '' &&
       this.state.email != '' &&
       this.state.password != '' &&
+      this.state.zipcode != '' &&
       this.state.confirm_password != '')
     ){
       alert("Please fill all the information")
@@ -80,7 +104,7 @@ class SignupScreen extends React.Component {
         .then((data)=>{
           console.log(data)
           console.log(this.state.email)
-          for(let i= 0; i< 100; i++){
+          /*for(let i= 0; i< 100; i++){
             if(this.state.location != null || this.state.location != undefined){    
                 this.state.latitude = JSON.stringify(this.state.location.coords.latitude);
                 this.state.longitude = JSON.stringify(this.state.location.coords.longitude);
@@ -90,13 +114,18 @@ class SignupScreen extends React.Component {
                 this._getLocationAsync();
                 console.log(i)
             }}
+            */
           console.log(this.state)
           storeData(this.state.email, this.state)
           initMatchData(this.state.email)
+          updateEmailList(this.state.email)
+          getEmailList()
+          console.log(temp)
           email = this.state.email
           alert("Let's take a quiz to find your matches!")
           if(this.state.age >= 50){
-            this.props.navigation.navigate("QuizScreen2",{email})
+            this.props.navigation.navigate("AuthScreen",{email})
+            alert("Put in your Organization's authorization code")
           } else {
             this.props.navigation.navigate("QuizScreen",{email})
           }
@@ -142,6 +171,15 @@ class SignupScreen extends React.Component {
               onChangeText={(age) => this.setState({ age })}
             />
           </Item>
+
+          <Item floatingLabel>
+            <Label style={{padding: 5}}>Zipcode</Label>
+            <Input
+              autoCorrect={false}
+              onChangeText={(zipcode) => this.setState({ zipcode })}
+            />
+          </Item>
+
 
           <Item floatingLabel>
             <Label style={{padding: 5}}>Phone Number</Label>

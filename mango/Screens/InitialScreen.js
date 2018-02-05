@@ -19,10 +19,10 @@ export default class Login extends React.Component {
         <Container style={styles.container} >
        
         <Form>
-        <Image
-            style = {{marginBottom: 60, alignSelf: 'center', height: 350, width: 350}}
-            source={require("../assets/logo.png")}/>
-        <Image/>
+          <Image
+              style = {{marginBottom: 60, alignSelf: 'center', height: 350, width: 350}}
+              source={require("../assets/logo.png")}/>
+          <Image/>
     
           <Button style={{ marginTop: 0 }}
             full
@@ -33,7 +33,7 @@ export default class Login extends React.Component {
             <Text style={{color:'white'}}>Login</Text>
           </Button>
 
-          <Button style={{ marginTop: 20, marginBottom: 150 }}
+          <Button style={{ marginTop: 20, marginBottom: 40 }}
             full
             rounded
             primary
@@ -41,7 +41,8 @@ export default class Login extends React.Component {
           >
             <Text style={{color:'white'}}>Sign Up</Text>
           </Button>
-          <Text style = {{textAlign: "center" }}> Make connections that span generations. </Text>
+          <Text style = {{textAlign: "center" , marginBottom: 100, color:'green'}}> Thanks for trying our new alpha version. Bug fixes and many other features are on the way. Thanks for your support :) </Text>
+          <Text style = {{textAlign: "center" }}> "Make connections that span generations. </Text>
         </Form>
       </Container>
 
@@ -54,5 +55,5 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center',
     padding: 20
-  }
+  },
 });

@@ -69,7 +69,7 @@ class QuizScreen extends React.Component {
     pre_checked = this.state.q3_checked
     pre_checked[i] = !pre_checked[i]
     this.setState({
-      q2_checked:pre_checked
+      q3_checked:pre_checked
     })
     console.log(this.state.q3_checked)
   }
@@ -78,7 +78,7 @@ class QuizScreen extends React.Component {
     pre_checked = this.state.q5_checked
     pre_checked[i] = !pre_checked[i]
     this.setState({
-      q2_checked:pre_checked
+      q5_checked:pre_checked
     })
     console.log(this.state.q5_checked)
   }
